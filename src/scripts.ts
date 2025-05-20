@@ -58,9 +58,16 @@ async function loadPokemons() {
   } else {
     console.log([
       `Pokemon parsing errors detected:`,
-      ...parsingResult.error.errors.map(err =>
-        `- ${err.path.join(".")}: ${err.message}`
-      )
+      ...parsingResult.error.errors.map(err => {
+        const invalidUnionMessage = match(err).with({code: 'invalid_union'}, ({unionErrors}) =>
+          // only first union error / issue is relevant in our case
+          match(unionErrors[0].issues[0])
+            .with({ code: 'invalid_literal'}, ({ received }) => `Invalid expected literal: ${received}`)
+            .otherwise(() => '')
+        ).otherwise(() => '')
+
+        return `- ${err.path.join(".")}: ${err.message} - ${invalidUnionMessage}`
+      })
     ].join("\n"));
     return [];
   }
