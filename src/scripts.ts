@@ -37,9 +37,14 @@ function compareTypes(attackingType: PokemonTypeName, defendingType: PokemonType
 }
 
 async function loadPokemons() {
-  const result = await fetchRawPokemons(async statusUpdated => {
-    showStatus(`status: ${statusUpdated.status}`)
-    // TODO: Do something here
+  const result = await fetchRawPokemons(async updated => {
+    showStatus(match(updated)
+      .with({status: 'initiated'}, () => `<em>Initializing</em>...`)
+      .with({status: 'loading'}, () => `<em>Loading...</em>...`)
+      .with({status: 'error'}, ({ errorMessage }) => `<span style="color: red">Error occured: ${errorMessage}</span>`)
+      .with({status: 'completed'}, ({ rawJson }) => `<span style="color: blue">Received ${rawJson.length} pokemon(s) !</span>`)
+      .exhaustive()
+    )
   });
   if(result.status === 'error') {
     throw new Error(result.errorMessage);
