@@ -1,3 +1,5 @@
+import {Ageable, Genderable, Identifiable} from "./types";
+
 console.log(`Hello world !`)
 
 const aBool: boolean = true,
@@ -29,3 +31,17 @@ type TotalSizeOf = (str1: string, str2: string) => number;
 const totalSizeOf: TotalSizeOf = (str1, str2) => str1.length + str2.length;
 
 console.log(totalSizeOf("Hello", "world"));
+
+type AgedPerson = IPerson & Ageable;
+type IdentifiableGenderedPerson = TPerson & Identifiable & Genderable;
+
+let agedPerson: AgedPerson = { firstName: "Anders", lastName: "Hejlsberg", age: 63 }
+// agedPerson = person; // doesn't work, firstName/lastName are private, and age is missing in Person
+
+// let person2: IPerson = person;
+// person = person2;
+
+let identifiableGenederedPerson: IdentifiableGenderedPerson = { id: "42", firstName: "Anders", lastName: "Hejlsberg" }
+identifiableGenederedPerson.firstName = "Ryan" // OK
+identifiableGenederedPerson.gender = "male" // OK
+// identifiableGenederedPerson.id = "666" // KO, id is readonly
