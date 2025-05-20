@@ -4,8 +4,7 @@ import {
   NORMAL_SPRITE_NAMES,
   SHINY_SPRITE_NAMES,
   SpriteName,
-  PokemonSprites,
-  PokemonName, POKEMON_BASE_PARSER
+  POKEMON_PARSER,
 } from "./types";
 import {z} from "zod";
 
@@ -21,7 +20,7 @@ async function loadPokemons() {
   const jsonResp = await fetch(`${TP_ROOT_PATH}data/pokemons.json`)
     .then(resp => resp.json());
 
-  const parsingResult = z.array(POKEMON_BASE_PARSER).safeParse(jsonResp);
+  const parsingResult = z.array(POKEMON_PARSER).safeParse(jsonResp);
   if(parsingResult.success) {
     return parsingResult.data;
   } else {
@@ -45,22 +44,19 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
   const frName = pokemon.names.find(n => n.lang === 'fr');
   let text = [
     `[${pokemon.id}] ${pokemon.name} ${frName ? `(FR: ${frName.name})` : ''}`,
-    // `${pokemon.stats.map(st => `${st.stat.name}:${st.base_stat}`).join(", ")}`,
-    // `Genders: ${pokemon.genders.map(gender => GENDER_LABEL[gender]).join("/")}`,
-    // `Types: ${pokemon.types.map(t => t.type.name).join(", ")}`,
-    // `Abilities: ${pokemon.abilities.map(ab => ab.ability.name).join(", ")}`,
+    `${pokemon.stats.map(st => `${st.stat.name}:${st.base_stat}`).join(", ")}`,
+    `Genders: ${pokemon.genders.map(gender => GENDER_LABEL[gender]).join("/")}`,
+    `Types: ${pokemon.types.map(t => t.type.name).join(", ")}`,
+    `Abilities: ${pokemon.abilities.map(ab => ab.ability.name).join(", ")}`,
   ].join('\n');
 
-  /* TODO: Uncomment once Flying pokemon will be handled with zod
   if(pokemon.can_fly) {
     text += `
     === Special: CAN FLY ! ===
     During ${pokemon.fly.duration[0]}${pokemon.fly.duration[1]} (CD: ${pokemon.fly.cooldown[0]}${pokemon.fly.cooldown[1]})
     `
   }
- */
 
-  /* TODO: Uncomment once Poisonous pokemon will be handled with zod
   if(pokemon.is_poisonous) {
     text += `
     === Special: POISONS ENNEMIES ! ===
@@ -68,9 +64,7 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
     Poisons ${pokemon.poisonous.damages} every ${pokemon.poisonous.every[0]}${pokemon.poisonous.every[1]} during ${pokemon.poisonous.during[0]}${pokemon.poisonous.during[1]}
     `
   }
- */
 
-  /* TODO: Uncomment once MEGA pokemon will be handled with zod
   if(pokemon.kind === 'mega') {
     text += `
     === MEGA FORM ===
@@ -78,7 +72,6 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
     Auto-regen: ${pokemon.mega.auto_regen.hp} every ${pokemon.mega.auto_regen.every[0]}${pokemon.mega.auto_regen.every[1]} during ${pokemon.mega.auto_regen.during[0]}${pokemon.mega.auto_regen.during[1]} (CD: ${pokemon.mega.auto_regen.cooldown[0]}${pokemon.mega.auto_regen.cooldown[1]})
     `
   }
- */
 
   document.querySelector("#result")!.innerHTML = text
 
