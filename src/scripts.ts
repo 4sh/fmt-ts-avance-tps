@@ -1,4 +1,13 @@
-import {Pokemon, PokemonGender, NORMAL_SPRITE_NAMES, SHINY_SPRITE_NAMES, SpriteName, PokemonSprites} from "./types.js";
+import {
+  Pokemon,
+  PokemonGender,
+  NORMAL_SPRITE_NAMES,
+  SHINY_SPRITE_NAMES,
+  SpriteName,
+  PokemonSprites,
+  PokemonName, POKEMON_BASE_PARSER
+} from "./types";
+import {z} from "zod";
 
 const GENDER_LABEL: {[key in PokemonGender]: string} = {
   male: "M",
@@ -9,9 +18,10 @@ const GENDER_LABEL: {[key in PokemonGender]: string} = {
 async function loadPokemons() {
   // Context starts from index.html (from where current script is imported)
   const TP_ROOT_PATH = `./`
-  const jsonResp = await fetch(`${TP_ROOT_PATH}data/pokemons.json`).then(resp => resp.json())
+  const jsonResp = await fetch(`${TP_ROOT_PATH}data/pokemons.json`)
+    .then(resp => resp.json());
 
-  return jsonResp;
+  return z.array(POKEMON_BASE_PARSER).parse(jsonResp);
 }
 
 function showPokemon(predicate: (pokemon: Pokemon) => boolean) {

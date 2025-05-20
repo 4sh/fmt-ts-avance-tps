@@ -1,7 +1,10 @@
-export type PokemonName = {
-  lang: "fr"|"en",
-  name: string,
-}
+import {z} from "zod";
+
+export const POKEMON_NAME_PARSER = z.object({
+  lang: z.union([z.literal("fr"), z.literal("en")]),
+  name: z.string(),
+})
+export type PokemonName = z.infer<typeof POKEMON_NAME_PARSER>;
 
 export type PokemonGender = "male"|"female"|"genderless"
 
@@ -47,17 +50,18 @@ export type PokemonSprites = ({
   [key: string]: PokemonSprites|undefined
 })
 
-export type PokemonBase = {
-  id: number,
-  name: string,
-  names: PokemonName[],
+export const POKEMON_BASE_PARSER = z.object({
+  id: z.number(),
+  name: z.string(),
+  names: z.array(POKEMON_NAME_PARSER),
   // TODO: Uncomment fields one by one once validated with zod
   // genders: PokemonGender[],
   // abilities: PokemonAbility[],
   // types: PokemonType[],
   // stats: PokemonStat[],
   // sprites: PokemonSprites
-}
+})
+export type PokemonBase = z.infer<typeof POKEMON_BASE_PARSER>;
 
 export type PokemonKindMixin = (
   { kind: "default"|"baby"|"legendary"|"mythical"|"other" }
