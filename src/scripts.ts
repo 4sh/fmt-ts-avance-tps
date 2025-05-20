@@ -1,3 +1,4 @@
+import { match } from "ts-pattern";
 import {
   Pokemon,
   PokemonGender,
@@ -9,11 +10,17 @@ import {
 import {z} from "zod";
 import {fetchRawPokemons} from "./pokemon-api";
 
-const GENDER_LABEL: {[key in PokemonGender]: string} = {
-  male: "M",
-  female: "F",
-  genderless: "-"
+function toGenderLabel(gender: PokemonGender): string {
+  const genderLabel = match(gender)
+    .with('male', () => 'M')
+    .with('female', () => 'F')
+    .with('genderless', () => '-')
+    .exhaustive();
+
+  console.log(`Gender label: ${genderLabel}`)
+  return genderLabel;
 }
+
 
 function showStatus(htmlContent: string) {
   const $status = document.querySelector(`#status`)
@@ -65,7 +72,7 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
   let text = [
     `[${pokemon.id}] ${pokemon.name} ${frName ? `(FR: ${frName.name})` : ''}`,
     `${pokemon.stats.map(st => `${st.stat.name}:${st.base_stat}`).join(", ")}`,
-    `Genders: ${pokemon.genders.map(gender => GENDER_LABEL[gender]).join("/")}`,
+    `Genders: ${pokemon.genders.map(gender => toGenderLabel(gender)).join("/")}`,
     `Types: ${pokemon.types.map(t => t.type.name).join(", ")}`,
     `Abilities: ${pokemon.abilities.map(ab => ab.ability.name).join(", ")}`,
   ].join('\n');

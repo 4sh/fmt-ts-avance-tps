@@ -11,6 +11,7 @@
     "vite": "6.2.4"
   },
   "dependencies": {
+    "ts-pattern": "5.7.0",
     "zod": "3.24.2"
   }
 }
