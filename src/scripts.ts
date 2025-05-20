@@ -34,6 +34,22 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
     `
   }
 
+  if(pokemon.is_poisonous) {
+    text += `
+    === Special: POISONS ENNEMIES ! ===
+    Rate: ${pokemon.poisonous.rate*100}%
+    Poisons ${pokemon.poisonous.damages} every ${pokemon.poisonous.every[0]}${pokemon.poisonous.every[1]} during ${pokemon.poisonous.during[0]}${pokemon.poisonous.during[1]}
+    `
+  }
+
+  if(pokemon.kind === 'mega') {
+    text += `
+    === MEGA FORM ===
+    Counter attack: ${pokemon.mega.counter_attack}
+    Auto-regen: ${pokemon.mega.auto_regen.hp} every ${pokemon.mega.auto_regen.every[0]}${pokemon.mega.auto_regen.every[1]} during ${pokemon.mega.auto_regen.during[0]}${pokemon.mega.auto_regen.during[1]} (CD: ${pokemon.mega.auto_regen.cooldown[0]}${pokemon.mega.auto_regen.cooldown[1]})
+    `
+  }
+
   document.querySelector("#result")!.innerHTML = text
 }
 
