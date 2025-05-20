@@ -15,6 +15,13 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
 
   let text = `[${pokemon.id}] ${pokemon.name}
     ${pokemon.stats.map(st => `${st.stat.name}:${st.base_stat}`).join(", ")}
+    Genders: ${pokemon.genders.map(gender => {
+      switch(gender) {
+        case "male": return "M";
+        case "female": return "F";
+        default: throw new Error(`Unsupported gender: ${gender}`)
+      }
+    }).join("/")}
     Types: ${pokemon.types.map(t => t.type.name).join(", ")}
     Abilities: ${pokemon.abilities.map(ab => ab.ability.name).join(", ")}
   `
