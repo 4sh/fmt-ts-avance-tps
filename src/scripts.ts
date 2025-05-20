@@ -22,7 +22,7 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
 }
 
 function findPokemonById() {
-  const id = document.querySelector("input")?.value;
+  const id = Number(document.querySelector("input")?.value);
   showPokemon(pokemon => pokemon.id === id);
 }
 function findPokemonByName() {
