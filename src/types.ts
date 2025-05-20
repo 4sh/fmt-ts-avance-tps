@@ -37,6 +37,17 @@ export type PokemonBase = {
   stats: PokemonStat[],
 }
 
+export type PokemonKindMixin = (
+  { kind: "default"|"baby"|"legendary"|"mythical"|"other" }
+  | {
+    kind: "mega",
+    mega: {
+      counter_attack: number,
+      auto_regen: { hp: number, every: Duration, during: Duration, cooldown: Duration }
+    }
+  }
+)
+
 export type FlyingPokemonMixin = (
   { can_fly: false }
   | { can_fly: true, fly: { duration: Duration, cooldown: Duration } }
@@ -47,4 +58,4 @@ export type PoisonousPokemonMixin = (
   | { is_poisonous: true, poisonous: { rate: number, every: Duration, during: Duration, damages: number } }
 )
 
-export type Pokemon = PokemonBase & FlyingPokemonMixin & PoisonousPokemonMixin
+export type Pokemon = PokemonBase & PokemonKindMixin & FlyingPokemonMixin & PoisonousPokemonMixin
