@@ -1,3 +1,5 @@
+export type PokemonGender = "male"|"female"
+
 export type Reference = {
   name: string, url: string
 }
@@ -21,6 +23,7 @@ export type PokemonStat = {
 export type Pokemon = {
   id: number,
   name: string,
+  genders: PokemonGender[],
   abilities: PokemonAbility[],
   types: PokemonType[],
   stats: PokemonStat[],
