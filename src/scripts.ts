@@ -1,4 +1,9 @@
-import {Pokemon} from "./types.js";
+import {Pokemon, PokemonGender} from "./types.js";
+
+const GENDER_LABEL: {[key: string]: string} = {
+  male: "M",
+  female: "F",
+}
 
 async function loadPokemons() {
   // Context starts from index.html (from where current script is imported)
@@ -16,13 +21,7 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
   const frName = pokemon.names.find(n => n.lang === 'fr');
   let text = `[${pokemon.id}] ${pokemon.name} ${frName ? `(FR: ${frName.name})` : ''}
     ${pokemon.stats.map(st => `${st.stat.name}:${st.base_stat}`).join(", ")}
-    Genders: ${pokemon.genders.map(gender => {
-      switch(gender) {
-        case "male": return "M";
-        case "female": return "F";
-        default: throw new Error(`Unsupported gender: ${gender}`)
-      }
-    }).join("/")}
+    Genders: ${pokemon.genders.map(gender => GENDER_LABEL[gender]).join("/")}
     Types: ${pokemon.types.map(t => t.type.name).join(", ")}
     Abilities: ${pokemon.abilities.map(ab => ab.ability.name).join(", ")}
   `
