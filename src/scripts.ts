@@ -1,3 +1,4 @@
+import {Pokemon} from "./types.js";
 
 async function loadPokemons() {
   // Context starts from index.html (from where current script is imported)
@@ -5,7 +6,7 @@ async function loadPokemons() {
   return await fetch(`${TP_ROOT_PATH}data/pokemons.json`).then(resp => resp.json())
 }
 
-function showPokemon(predicate) {
+function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
   const pokemon = POKEMONS.find(predicate);
   if(!pokemon) {
     console.log(`No pokemon found matching predicate ${predicate.toString()}`)
@@ -29,7 +30,7 @@ function findPokemonByName() {
   showPokemon(pokemon => pokemon.name.toLowerCase() === name?.toLowerCase());
 }
 
-let POKEMONS = [];
+let POKEMONS: Pokemon[] = [];
 async function main() {
   POKEMONS = await loadPokemons();
   console.log(`All ${POKEMONS.length} pokemons loaded successfully !`)
