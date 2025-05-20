@@ -27,7 +27,7 @@ export type PokemonStat = {
 
 export type Duration = [ number, 'ms' ]
 
-export type Pokemon = {
+export type PokemonBase = {
   id: number,
   name: string,
   names: PokemonName[],
@@ -35,9 +35,11 @@ export type Pokemon = {
   abilities: PokemonAbility[],
   types: PokemonType[],
   stats: PokemonStat[],
-  can_fly: boolean,
 }
 
-export type FlyingPokemon = Pokemon & {
-  fly: { duration: Duration, cooldown: Duration }
-}
+export type FlyingPokemonMixin = (
+  { can_fly: false }
+  | { can_fly: true, fly: { duration: Duration, cooldown: Duration } }
+)
+
+export type Pokemon = PokemonBase & FlyingPokemonMixin
