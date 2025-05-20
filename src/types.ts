@@ -27,17 +27,19 @@ export type PokemonStat = {
 
 export type Duration = [ number, 'ms' ]
 
-export const NORMAL_SPRITE_NAMES = [ "front_default", "front_female", "back_default", "back_female"];
-export const SHINY_SPRITE_NAMES = [ "front_shiny", "front_shiny_female", "back_shiny", "back_shiny_female"];
+export const NORMAL_SPRITE_NAMES = [
+  "front_default", "front_female", "front_gray", "front_transparent",
+  "back_default", "back_female", "back_gray", "back_transparent"
+] as const;
+export const SHINY_SPRITE_NAMES = [
+  "front_shiny", "front_shiny_female", "front_shiny_transparent",
+  "back_shiny", "back_shiny_female", "back_shiny_transparent"
+] as const;
 export const SPRITE_NAMES = [
   ...NORMAL_SPRITE_NAMES, ...SHINY_SPRITE_NAMES
-]
+] as const
 
-export type SpriteName = unknown
-/* ⬆️ Please, define this type properly so that it corresponds to:
-   "front_default" | "front_female" | "back_default" | "back_female" | "front_shiny" | "front_shiny_female" | "back_shiny" | "back_shiny_female"
-   (if we add a new entry in one of NORMAL_SPRITE_NAMES or SHINY_SPRITE_NAMES arrays, it should be automatically reflected into this type)
-*/
+export type SpriteName = (typeof SPRITE_NAMES)[number]
 
 export type PokemonSprites = unknown
 /* ⬆️ Please, define a mapped type here, allowing to capture a sprites map
