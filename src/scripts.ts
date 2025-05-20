@@ -1,4 +1,4 @@
-import {Pokemon} from "./types.js";
+import {FlyingPokemon, Pokemon} from "./types.js";
 
 async function loadPokemons() {
   // Context starts from index.html (from where current script is imported)
@@ -27,7 +27,7 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
     Abilities: ${pokemon.abilities.map(ab => ab.ability.name).join(", ")}
   `
 
-  if(pokemon.can_fly /* <- Please, update this so that when true, we can consider the pokemon.fly node as defined */) {
+  if(pokemonCanFly(pokemon)) {
     text += `
     === Special: CAN FLY ! ===
     During ${pokemon.fly.duration[0]}${pokemon.fly.duration[1]} (CD: ${pokemon.fly.cooldown[0]}${pokemon.fly.cooldown[1]})
@@ -35,6 +35,10 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
   }
 
   document.querySelector("#result")!.innerHTML = text
+}
+
+function pokemonCanFly(pokemon: Pokemon): pokemon is FlyingPokemon {
+  return pokemon.can_fly;
 }
 
 function findPokemonById() {
