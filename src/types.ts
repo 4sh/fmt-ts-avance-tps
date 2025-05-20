@@ -41,12 +41,11 @@ export const SPRITE_NAMES = [
 
 export type SpriteName = (typeof SPRITE_NAMES)[number]
 
-export type PokemonSprites = unknown
-/* ⬆️ Please, define a mapped type here, allowing to capture a sprites map
-   Sprite map :
-   - can be made of any of *SpriteName* keys, with value being a (potentially undefined) string
-   - can be made of *any* string key, but in that case, value should be a PokemonSprites "sub-map"
-*/
+export type PokemonSprites = ({
+  [key in SpriteName]: string|null|undefined
+} & {
+  [key: string]: PokemonSprites|undefined
+})
 
 export type PokemonBase = {
   id: number,
