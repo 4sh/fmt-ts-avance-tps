@@ -20,9 +20,18 @@ export const POKEMON_ABILITY_PARSER = z.object({
 })
 export type PokemonAbility = z.infer<typeof POKEMON_ABILITY_PARSER>
 
+export const POKEMON_TYPENAME_PARSER = z.union([
+  z.literal('grass'), z.literal('poison'), z.literal('fire'), z.literal('flying'),
+  z.literal('water'), z.literal('electric'), z.literal('psychic'), z.literal('ground'),
+  z.literal('rock'), z.literal('normal'), z.literal('ice'), z.literal('steel'),
+  z.literal('bug'), z.literal('fighting'), z.literal('fairy'), z.literal('ghost'),
+  z.literal('dark'), z.literal('dragon'),
+]);
 export const POKEMON_TYPE_PARSER = z.object({
   slot: z.number(),
-  type: REFERENCE_PARSER,
+  type: REFERENCE_PARSER.omit({ name: true }).extend({
+    name: POKEMON_TYPENAME_PARSER
+  }),
 })
 export type PokemonTypeName = z.infer<typeof POKEMON_TYPE_PARSER>['type']['name'];
 export type PokemonType = z.infer<typeof POKEMON_TYPE_PARSER>;
