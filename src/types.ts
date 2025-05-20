@@ -42,4 +42,9 @@ export type FlyingPokemonMixin = (
   | { can_fly: true, fly: { duration: Duration, cooldown: Duration } }
 )
 
-export type Pokemon = PokemonBase & FlyingPokemonMixin
+export type PoisonousPokemonMixin = (
+  { is_poisonous: false }
+  | { is_poisonous: true, poisonous: { rate: number, every: Duration, during: Duration, damages: number } }
+)
+
+export type Pokemon = PokemonBase & FlyingPokemonMixin & PoisonousPokemonMixin
