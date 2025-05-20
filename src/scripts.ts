@@ -9,7 +9,9 @@ const GENDER_LABEL: {[key in PokemonGender]: string} = {
 async function loadPokemons() {
   // Context starts from index.html (from where current script is imported)
   const TP_ROOT_PATH = `./`
-  return await fetch(`${TP_ROOT_PATH}data/pokemons.json`).then(resp => resp.json())
+  const jsonResp = await fetch(`${TP_ROOT_PATH}data/pokemons.json`).then(resp => resp.json())
+
+  return jsonResp;
 }
 
 function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
