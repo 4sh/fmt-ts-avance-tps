@@ -1,4 +1,4 @@
-import { match } from "ts-pattern";
+import {match, P} from "ts-pattern";
 import {
   Pokemon,
   PokemonGender,
@@ -32,8 +32,17 @@ function showStatus(htmlContent: string) {
 }
 
 function compareTypes(attackingType: PokemonTypeName, defendingType: PokemonTypeName) {
-  // TODO: change me !
-  return "Unknown result !";
+  const ratio = match([attackingType, defendingType])
+    .with(P.union(['fire', 'fire'], ['fire', 'water'], ['water', 'water'], ['electric', 'electric']), () => 0.5)
+    .with(P.union(['water', 'fire'], ['electric', 'water']), () => 2)
+    .with([P.union('normal', 'fire', 'water', 'electric'), P.union('normal', 'fire', 'water', 'electric')], () => 1)
+    .otherwise(() => undefined);
+
+  if(ratio !== undefined) {
+    return `${attackingType} a ${ratio}x d'attaque versus ${defendingType}`
+  } else {
+    return "Unknown result !";
+  }
 }
 
 async function loadPokemons() {
