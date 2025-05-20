@@ -3,6 +3,7 @@ import {Pokemon, PokemonGender} from "./types.js";
 const GENDER_LABEL: {[key in PokemonGender]: string} = {
   male: "M",
   female: "F",
+  genderless: "-"
 }
 
 async function loadPokemons() {

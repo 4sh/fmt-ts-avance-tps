@@ -3,7 +3,7 @@ export type PokemonName = {
   name: string,
 }
 
-export type PokemonGender = "male"|"female"
+export type PokemonGender = "male"|"female"|"genderless"
 
 export type Reference = {
   name: string, url: string
