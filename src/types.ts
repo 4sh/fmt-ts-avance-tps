@@ -1,3 +1,8 @@
+export type PokemonName = {
+  lang: "fr"|"en",
+  name: string,
+}
+
 export type PokemonGender = "male"|"female"
 
 export type Reference = {
@@ -23,6 +28,7 @@ export type PokemonStat = {
 export type Pokemon = {
   id: number,
   name: string,
+  names: PokemonName[],
   genders: PokemonGender[],
   abilities: PokemonAbility[],
   types: PokemonType[],

@@ -13,7 +13,8 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
     return;
   }
 
-  let text = `[${pokemon.id}] ${pokemon.name}
+  const frName = pokemon.names.find(n => n.lang === 'fr');
+  let text = `[${pokemon.id}] ${pokemon.name} ${frName ? `(FR: ${frName.name})` : ''}
     ${pokemon.stats.map(st => `${st.stat.name}:${st.base_stat}`).join(", ")}
     Genders: ${pokemon.genders.map(gender => {
       switch(gender) {
