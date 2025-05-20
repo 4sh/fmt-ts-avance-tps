@@ -26,6 +26,14 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
     Types: ${pokemon.types.map(t => t.type.name).join(", ")}
     Abilities: ${pokemon.abilities.map(ab => ab.ability.name).join(", ")}
   `
+
+  if(pokemon.can_fly /* <- Please, update this so that when true, we can consider the pokemon.fly node as defined */) {
+    text += `
+    === Special: CAN FLY ! ===
+    During ${pokemon.fly.duration[0]}${pokemon.fly.duration[1]} (CD: ${pokemon.fly.cooldown[0]}${pokemon.fly.cooldown[1]})
+    `
+  }
+
   document.querySelector("#result")!.innerHTML = text
 }
 
