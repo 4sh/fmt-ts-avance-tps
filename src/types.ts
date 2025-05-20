@@ -51,11 +51,12 @@ export type PokemonBase = {
   id: number,
   name: string,
   names: PokemonName[],
-  genders: PokemonGender[],
-  abilities: PokemonAbility[],
-  types: PokemonType[],
-  stats: PokemonStat[],
-  sprites: PokemonSprites
+  // TODO: Uncomment fields one by one once validated with zod
+  // genders: PokemonGender[],
+  // abilities: PokemonAbility[],
+  // types: PokemonType[],
+  // stats: PokemonStat[],
+  // sprites: PokemonSprites
 }
 
 export type PokemonKindMixin = (
@@ -79,4 +80,8 @@ export type PoisonousPokemonMixin = (
   | { is_poisonous: true, poisonous: { rate: number, every: Duration, during: Duration, damages: number } }
 )
 
-export type Pokemon = PokemonBase & PokemonKindMixin & FlyingPokemonMixin & PoisonousPokemonMixin
+export type Pokemon = PokemonBase
+  // TODO: Uncomment fields one by one once validated with zod
+  // & PokemonKindMixin
+  // & FlyingPokemonMixin
+  // & PoisonousPokemonMixin

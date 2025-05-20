@@ -20,20 +20,24 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
   }
 
   const frName = pokemon.names.find(n => n.lang === 'fr');
-  let text = `[${pokemon.id}] ${pokemon.name} ${frName ? `(FR: ${frName.name})` : ''}
-    ${pokemon.stats.map(st => `${st.stat.name}:${st.base_stat}`).join(", ")}
-    Genders: ${pokemon.genders.map(gender => GENDER_LABEL[gender]).join("/")}
-    Types: ${pokemon.types.map(t => t.type.name).join(", ")}
-    Abilities: ${pokemon.abilities.map(ab => ab.ability.name).join(", ")}
-  `
+  let text = [
+    `[${pokemon.id}] ${pokemon.name} ${frName ? `(FR: ${frName.name})` : ''}`,
+    // `${pokemon.stats.map(st => `${st.stat.name}:${st.base_stat}`).join(", ")}`,
+    // `Genders: ${pokemon.genders.map(gender => GENDER_LABEL[gender]).join("/")}`,
+    // `Types: ${pokemon.types.map(t => t.type.name).join(", ")}`,
+    // `Abilities: ${pokemon.abilities.map(ab => ab.ability.name).join(", ")}`,
+  ].join('\n');
 
+  /* TODO: Uncomment once Flying pokemon will be handled with zod
   if(pokemon.can_fly) {
     text += `
     === Special: CAN FLY ! ===
     During ${pokemon.fly.duration[0]}${pokemon.fly.duration[1]} (CD: ${pokemon.fly.cooldown[0]}${pokemon.fly.cooldown[1]})
     `
   }
+ */
 
+  /* TODO: Uncomment once Poisonous pokemon will be handled with zod
   if(pokemon.is_poisonous) {
     text += `
     === Special: POISONS ENNEMIES ! ===
@@ -41,7 +45,9 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
     Poisons ${pokemon.poisonous.damages} every ${pokemon.poisonous.every[0]}${pokemon.poisonous.every[1]} during ${pokemon.poisonous.during[0]}${pokemon.poisonous.during[1]}
     `
   }
+ */
 
+  /* TODO: Uncomment once MEGA pokemon will be handled with zod
   if(pokemon.kind === 'mega') {
     text += `
     === MEGA FORM ===
@@ -49,10 +55,11 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
     Auto-regen: ${pokemon.mega.auto_regen.hp} every ${pokemon.mega.auto_regen.every[0]}${pokemon.mega.auto_regen.every[1]} during ${pokemon.mega.auto_regen.during[0]}${pokemon.mega.auto_regen.during[1]} (CD: ${pokemon.mega.auto_regen.cooldown[0]}${pokemon.mega.auto_regen.cooldown[1]})
     `
   }
+ */
 
   document.querySelector("#result")!.innerHTML = text
 
-  // Please, make console.log() tests below compile (without touching it, simply by defining proper Pokemon['sprites'] type)
+  /* TODO: Uncomment once pokemon sprites will be handled with zod
   console.log(pokemon.sprites.back_default?.toLowerCase())
   console.log(pokemon.sprites.front_default?.toLowerCase())
   console.log(pokemon.sprites.front_shiny?.toLowerCase())
@@ -61,6 +68,7 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
   console.log(pokemon.sprites.other?.dream_world?.back_female?.toLowerCase())
   console.log(pokemon.sprites.other?.dream_world?.front_female?.toLowerCase())
   console.log(pokemon.sprites.versions?.['generation-i']?.['red-blue']?.back_shiny_female?.toLowerCase())
+   */
 
   const spritePictures = SPRITES_KNOWN_PATHS.reduce((content, path) => {
     const pathSpritePictures = [NORMAL_SPRITE_NAMES, SHINY_SPRITE_NAMES].map(row =>
@@ -70,7 +78,7 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
       }).join("")
     ).join("<br/>")
 
-    if(pathSpritePictures && pathSpritePictures !== '<br/>') {
+    if (pathSpritePictures && pathSpritePictures !== '<br/>') {
       return `${content}<h4>${path.join(" > ")}</h4>${pathSpritePictures}`;
     } else {
       return content;
@@ -81,20 +89,29 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
 }
 
 function spritesPath(pokemon: Pokemon, spritePath: string[], spriteName: SpriteName) {
-  const targetNode = spritePath.reduce((node: PokemonSprites|undefined, spritePath: string) => node === undefined ? undefined : node[spritePath], pokemon.sprites);
+  // TODO: to uncomment once sprites will be handled with zod
+  /*
+  const targetNode = spritePath.reduce(
+    (node: PokemonSprites | undefined, spritePath: string) => node === undefined ? undefined : node[spritePath],
+    pokemon.sprites
+  );
   return targetNode ? targetNode[spriteName] : undefined;
+   */
+  return undefined;
 }
 
 function findPokemonById() {
   const id = Number(document.querySelector("input")?.value);
   showPokemon(pokemon => pokemon.id === id);
 }
+
 function findPokemonByName() {
   const name = document.querySelector("input")?.value;
   showPokemon(pokemon => pokemon.name.toLowerCase() === name?.toLowerCase());
 }
 
 let POKEMONS: Pokemon[] = [];
+
 async function main() {
   POKEMONS = await loadPokemons();
   console.log(`All ${POKEMONS.length} pokemons loaded successfully !`)
