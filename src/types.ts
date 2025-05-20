@@ -51,7 +51,7 @@ export type PokemonSprites = ({
 })
 
 export const POKEMON_BASE_PARSER = z.object({
-  id: z.number(),
+  id: z.string(),
   name: z.string(),
   names: z.array(POKEMON_NAME_PARSER),
   // TODO: Uncomment fields one by one once validated with zod

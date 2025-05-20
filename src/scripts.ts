@@ -21,7 +21,18 @@ async function loadPokemons() {
   const jsonResp = await fetch(`${TP_ROOT_PATH}data/pokemons.json`)
     .then(resp => resp.json());
 
-  return z.array(POKEMON_BASE_PARSER).parse(jsonResp);
+  const parsingResult = z.array(POKEMON_BASE_PARSER).safeParse(jsonResp);
+  if(parsingResult.success) {
+    return parsingResult.data;
+  } else {
+    console.log([
+      `Pokemon parsing errors detected:`,
+      ...parsingResult.error.errors.map(err =>
+        `- ${err.path.join(".")}: ${err.message}`
+      )
+    ].join("\n"));
+    return [];
+  }
 }
 
 function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
