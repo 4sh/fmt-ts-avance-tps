@@ -18,7 +18,7 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
     Types: ${pokemon.types.map(t => t.type.name).join(", ")}
     Abilities: ${pokemon.abilities.map(ab => ab.ability.name).join(", ")}
   `
-  document.querySelector("#result").innerHTML = text
+  document.querySelector("#result")!.innerHTML = text
 }
 
 function findPokemonById() {
@@ -35,8 +35,8 @@ async function main() {
   POKEMONS = await loadPokemons();
   console.log(`All ${POKEMONS.length} pokemons loaded successfully !`)
 
-  document.querySelector("#showPokemonById").addEventListener('click', findPokemonById);
-  document.querySelector("#showPokemonByName").addEventListener('click', findPokemonByName);
+  document.querySelector("#showPokemonById")!.addEventListener('click', findPokemonById);
+  document.querySelector("#showPokemonByName")!.addEventListener('click', findPokemonByName);
   console.log("Button events initiated !")
 }
 
