@@ -4,9 +4,10 @@ import {
   NORMAL_SPRITE_NAMES,
   SHINY_SPRITE_NAMES,
   SpriteName,
-  POKEMON_PARSER,
+  POKEMON_PARSER, PokemonTypeName,
 } from "./types";
 import {z} from "zod";
+import {fetchRawPokemons} from "./pokemon-api";
 
 const GENDER_LABEL: {[key in PokemonGender]: string} = {
   male: "M",
@@ -14,11 +15,30 @@ const GENDER_LABEL: {[key in PokemonGender]: string} = {
   genderless: "-"
 }
 
+function showStatus(htmlContent: string) {
+  const $status = document.querySelector(`#status`)
+  if($status) {
+    $status.innerHTML = htmlContent;
+  } else {
+    console.error(`no #status found !`)
+  }
+}
+
+function compareTypes(attackingType: PokemonTypeName, defendingType: PokemonTypeName) {
+  // TODO: change me !
+  return "Unknown result !";
+}
+
 async function loadPokemons() {
-  // Context starts from index.html (from where current script is imported)
-  const TP_ROOT_PATH = `./`
-  const jsonResp = await fetch(`${TP_ROOT_PATH}data/pokemons.json`)
-    .then(resp => resp.json());
+  const result = await fetchRawPokemons(async statusUpdated => {
+    showStatus(`status: ${statusUpdated.status}`)
+    // TODO: Do something here
+  });
+  if(result.status === 'error') {
+    throw new Error(result.errorMessage);
+  }
+
+  const jsonResp = result.rawJson;
 
   const parsingResult = z.array(POKEMON_PARSER).safeParse(jsonResp);
   if(parsingResult.success) {
@@ -126,14 +146,33 @@ function findPokemonByName() {
   showPokemon(pokemon => pokemon.name.toLowerCase() === name?.toLowerCase());
 }
 
+function comparePokemonTypes() {
+  const attackingType = (document.querySelector("#attackingType") as HTMLSelectElement).value as PokemonTypeName;
+  const defendingType = (document.querySelector("#defendingType") as HTMLSelectElement).value as PokemonTypeName;
+
+  document.querySelector("#pokemon-type-comparison")!.innerHTML = compareTypes(attackingType, defendingType);
+}
+
 let POKEMONS: Pokemon[] = [];
 
 async function main() {
   POKEMONS = await loadPokemons();
   console.log(`All ${POKEMONS.length} pokemons loaded successfully !`)
 
+  document.querySelector("#pokemons-count")!.innerHTML = `<strong>${POKEMONS.length}</strong> Pokemon(s) loaded !`
   document.querySelector("#showPokemonById")!.addEventListener('click', findPokemonById);
   document.querySelector("#showPokemonByName")!.addEventListener('click', findPokemonByName);
+
+  const uniquePokemonTypes = POKEMONS.reduce((types, pokemon) => {
+    pokemon.types.forEach(pokemonType => types.add(pokemonType.type.name))
+    return types;
+  }, new Set<string>())
+  const pokemonTypeOptions = [...uniquePokemonTypes].sort().map(type => `<option value="${type}">${type}</option>`).join("\n")
+  document.querySelectorAll("#attackingType, #defendingType").forEach(selectNode => {
+    selectNode.innerHTML = pokemonTypeOptions;
+  })
+  document.querySelector("#comparePokemonTypes")!.addEventListener('click', comparePokemonTypes);
+
   console.log("Button events initiated !")
 }
 
