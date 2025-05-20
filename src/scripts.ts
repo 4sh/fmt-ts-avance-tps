@@ -1,4 +1,4 @@
-import {Pokemon, PokemonGender} from "./types.js";
+import {Pokemon, PokemonGender, NORMAL_SPRITE_NAMES, SHINY_SPRITE_NAMES, SpriteName, PokemonSprites} from "./types.js";
 
 const GENDER_LABEL: {[key in PokemonGender]: string} = {
   male: "M",
@@ -51,6 +51,38 @@ function showPokemon(predicate: (pokemon: Pokemon) => boolean) {
   }
 
   document.querySelector("#result")!.innerHTML = text
+
+  // Please, make console.log() tests below compile (without touching it, simply by defining proper Pokemon['sprites'] type)
+  console.log(pokemon.sprites.back_default?.toLowerCase())
+  console.log(pokemon.sprites.front_default?.toLowerCase())
+  console.log(pokemon.sprites.front_shiny?.toLowerCase())
+  console.log(pokemon.sprites.front_shiny_female?.toLowerCase())
+  console.log(pokemon.sprites.other?.dream_world?.back_shiny?.toLowerCase())
+  console.log(pokemon.sprites.other?.dream_world?.back_female?.toLowerCase())
+  console.log(pokemon.sprites.other?.dream_world?.front_female?.toLowerCase())
+  console.log(pokemon.sprites.versions?.['generation-i']?.['red-blue']?.back_shiny_female?.toLowerCase())
+
+  const spritePictures = SPRITES_KNOWN_PATHS.reduce((content, path) => {
+    const pathSpritePictures = [NORMAL_SPRITE_NAMES, SHINY_SPRITE_NAMES].map(row =>
+      row.map(spriteName => {
+        const sprite = spritesPath(pokemon, path, spriteName);
+        return sprite ? `<img src="${sprite}" alt="${spriteName}" title="${spriteName}" style="max-height: 96px; border: 1px solid gray;" />` : ''
+      }).join("")
+    ).join("<br/>")
+
+    if(pathSpritePictures && pathSpritePictures !== '<br/>') {
+      return `${content}<h4>${path.join(" > ")}</h4>${pathSpritePictures}`;
+    } else {
+      return content;
+    }
+  }, '');
+
+  document.querySelector("#sprites")!.innerHTML = `<h2>Assets</h2>${spritePictures}`
+}
+
+function spritesPath(pokemon: Pokemon, spritePath: string[], spriteName: SpriteName) {
+  const targetNode = spritePath.reduce((node: PokemonSprites|undefined, spritePath: string) => node === undefined ? undefined : node[spritePath], pokemon.sprites);
+  return targetNode ? targetNode[spriteName] : undefined;
 }
 
 function findPokemonById() {
@@ -71,5 +103,31 @@ async function main() {
   document.querySelector("#showPokemonByName")!.addEventListener('click', findPokemonByName);
   console.log("Button events initiated !")
 }
+
+const SPRITES_KNOWN_PATHS = [
+  [],
+  ["other", "dream_world"],
+  ["other", "home"],
+  ["other", "official-artwork"],
+  ["other", "showdown"],
+  ["versions", "generation-i", "red-blue"],
+  ["versions", "generation-i", "yellow"],
+  ["versions", "generation-ii", "crystal"],
+  ["versions", "generation-ii", "gold"],
+  ["versions", "generation-ii", "silver"],
+  ["versions", "generation-iii", "emeral"],
+  ["versions", "generation-iii", "firered-leafgreen"],
+  ["versions", "generation-iii", "ruby-sapphire"],
+  ["versions", "generation-iv", "diamond-pearl"],
+  ["versions", "generation-iv", "heartgold-soulsilver"],
+  ["versions", "generation-iv", "platinum"],
+  ["versions", "generation-v", "black-white"],
+  ["versions", "generation-v", "black-white", "animated"],
+  ["versions", "generation-vi", "omegaruby-alphasapphire"],
+  ["versions", "generation-vi", "x-y"],
+  ["versions", "generation-vii", "icons"],
+  ["versions", "generation-vii", "ultra-sun-ultra-moon"],
+  ["versions", "generation-viii", "icons"]
+]
 
 main();
