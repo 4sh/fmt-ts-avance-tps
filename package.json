@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "start": "http-server ./ -p 12345"
   },
-  "author": "4SH"
+  "author": "4SH",
+  "devDependencies": {
+    "http-server": "14.1.1"
+  }
 }
