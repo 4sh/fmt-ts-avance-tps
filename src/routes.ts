@@ -1,25 +1,5 @@
 // =============================================================================
-// TP 5.1 - Partie 2 : typer des routes paramétrables
-// =============================================================================
-//
-// Contexte : l'application définit ses routes sous forme de patterns
-// ("/users/:id", "/users/:userId/posts/:postId", "/settings"). La fonction
-// navigate(path, params) doit :
-//   - contraindre `path` à l'une des routes déclarées (autocomplétion)
-//   - dériver la forme de `params` DEPUIS le pattern (paramètres exigés)
-//   - rendre `params` optionnel quand la route n'a pas de paramètre
-//
-// Étapes suggérées (voir énoncé) :
-//   1. Extraire les NOMS de paramètres d'un pattern d'URL, en deux temps :
-//        1a) LastParam<S>     — cas simple : un seul paramètre en fin de chaîne
-//        1b) ExtractParams<S> — cas récursif : plusieurs paramètres
-//
-//   2. Construire ParamsOf<Path> = objet des paramètres attendus
-//
-//   3. Typer navigate(path, params?)
-//        - path contraint à l'une des routes de ROUTES
-//        - params exactement typé selon le pattern
-//        - params optionnel quand la route n'a pas de paramètre
+// TP 5.1 - Partie 2 : SOLUTION
 // =============================================================================
 
 import type { Equal, Expect } from "./type-tests.ts";
@@ -34,10 +14,11 @@ export type RoutePattern = typeof ROUTES[number];
 
 // -----------------------------------------------------------------------------
 // Étape 1a — LastParam : nom du paramètre en fin de chaîne
-//   Astuce : un pattern template literal avec `infer` pour capturer ce qui
-//   suit le dernier `:`.
+//   Le pattern `${string}:${infer P}` capture tout ce qui suit le dernier `:`
+//   grâce à la nature "gourmande" de `${string}`.
 // -----------------------------------------------------------------------------
-export type LastParam<S extends string> = never; // à remplacer
+export type LastParam<S extends string> =
+  S extends `${string}:${infer P}` ? P : never;
 
 type _result_1a_settings = LastParam<"/settings">;
 type _result_1a_users = LastParam<"/users/:userId">;
@@ -55,8 +36,18 @@ type _test_1a = [
 //   Astuce : distinguer deux cas via des patterns template literal, et récurser
 //   sur la portion de chaîne qui reste à traiter.
 //   Astuce: `${string}:` est "glouton": il consommera tous les ":" sauf le dernier
+//
+//   SOLUTION:
+//   Deux cas :
+//     - le paramètre est suivi d'un "/" : on capture P puis on récurse sur Rest
+//     - le paramètre est en fin de chaîne : cas terminal (comme LastParam)
 // -----------------------------------------------------------------------------
-export type ExtractParams<S extends string> = never; // à remplacer
+export type ExtractParams<S extends string> =
+  S extends `${string}:${infer Param}/${infer Rest}`
+    ? Param | ExtractParams<Rest>
+    : S extends `${string}:${infer Param}`
+      ? Param
+      : never;
 
 type _result_1b_settings = ExtractParams<"/settings">;
 type _result_1b_users = ExtractParams<"/users/:userId">;
@@ -69,10 +60,12 @@ type _test_1b = [
 ];
 
 // -----------------------------------------------------------------------------
-// Étape 2 — ParamsOf : objet des paramètres attendus pour un pattern donné
-//   Astuce : Mapped Type sur l'union renvoyée par ExtractParams.
+// Étape 2 — ParamsOf : objet des paramètres attendus
+//   Mapped Type sur l'union renvoyée par ExtractParams.
 // -----------------------------------------------------------------------------
-export type ParamsOf<P extends string> = never; // à remplacer
+export type ParamsOf<P extends string> = ExtractParams<P> extends never
+  ? never
+  : { [K in ExtractParams<P>]: string };
 
 type _result_2_settings = ParamsOf<"/settings">;
 type _result_2_users = ParamsOf<"/users/:userId">;
@@ -93,23 +86,24 @@ type _test_2 = [
 //
 //     (b) Modifier ParamsOf pour faire en sorte d'avoir never lorsqu'aucun paramètre n'est attendu
 // -----------------------------------------------------------------------------
-export function navigate(path: string, params?: Record<string, string>): void {
+export function navigate<P extends RoutePattern>(path: P, params?: ParamsOf<P>): void {
   const paramsRecords = (params ?? {}) as Record<string, string>;
   const url = path.replace(/:(\w+)/g, (_, k) => paramsRecords[k] ?? `:${k}`);
   console.log("→", url);
 }
 
 // -----------------------------------------------------------------------------
-// Cas d'utilisation (décommenter au fur et à mesure)
+// Cas d'utilisation
 // -----------------------------------------------------------------------------
 
-// navigate("/settings");                                        // ✅
-// navigate("/users/:userId", { userId: "42" });                 // ✅
-// navigate("/users/:userId", { id: "42" });                     // ❌ mauvais nom
-// navigate("/users/:userId/posts/:postId", { userId: "1" });    // ❌ postId manquant
-// navigate("/users/:userId/posts/:postId", {                    // ✅
-//   userId: "1",
-//   postId: "10",
-// });
-// navigate("/unknown");                                         // ❌ route inconnue
-// navigate("/settings", { foo: "bar" });                        // ❌ pas de params attendus
+navigate("/settings");                                          // ✅
+navigate("/users/:userId", { userId: "42" });                   // ✅
+navigate("/users/:userId/posts/:postId", {                      // ✅
+  userId: "1",
+  postId: "10",
+});
+
+// navigate("/users/:userId", { id: "42" });                    // ❌ mauvais nom
+// navigate("/users/:userId/posts/:postId", { userId: "1" });   // ❌ postId manquant
+// navigate("/unknown");                                        // ❌ route inconnue
+// navigate("/settings", { foo: "bar" });                       // ❌ pas de params attendus
