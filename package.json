@@ -1,17 +1,14 @@
 {
-  "name": "typescript-training",
+  "name": "typescript-training-avance",
   "version": "1.0.0",
-  "description": "",
+  "description": "TPs typage avancé Typescript",
   "scripts": {
-    "start": "vite dev"
+    "start": "vite dev",
+    "typecheck": "tsc --noEmit"
   },
   "author": "4SH",
-  "devDependencies": {
-    "typescript": "5.3.3",
-    "vite": "6.2.4"
-  },
   "dependencies": {
-    "ts-pattern": "5.7.0",
-    "zod": "3.24.2"
+    "typescript": "7.0.2",
+    "vite": "8.2.1"
   }
 }
